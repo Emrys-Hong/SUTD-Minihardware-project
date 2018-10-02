@@ -6,13 +6,17 @@ module adder (
     output ci, //last input to full adder
     input s, //sum and carry-out output from full adder, to test if output is correct
     input co,
-    output error //boolean to show if the error state is reached
+    output a_out[4],
+    output b_out[4],
+    output c_out[4],
+    output d_out[4],
+    output testcase[8]
   ) {
   .clk(clk){
   edge_detector edge_detector(#RISE(1), #FALL(0)); //edge_detector to detect rising edge of state_changer
   .rst(rst){
   dff state_changer[27]; //27 bit number, used as a timer. Change state when most significant bit is 1
-  fsm state = {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN,ERROR}; //all possible combinations of inputs to adder, plus one error state
+  fsm state = {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, ERROR, GOOD}; //all possible combinations of inputs to adder, plus one error state
     }
   
   }
@@ -20,7 +24,11 @@ module adder (
     a=0;
     b=0;
     ci=0;
-    error = 0;
+    a_out = 4h00;
+    b_out = 4h00;
+    c_out = 4h00;
+    d_out = 4h00;
+    testcase = 8b0;
     edge_detector.in = state_changer.q[26]; //most significant bit of 27 bit number
     state_changer.d = state_changer.q + 1; //increase value of state_changer for every clock cycle
     case (state.q){
@@ -28,6 +36,11 @@ module adder (
         a = 0; //set inputs to be 000
         b = 0;
         ci = 0;
+        a_out = 4h00;
+        b_out = 4h00;
+        c_out = 4h00;
+        d_out = 4h00;
+        testcase = 8b0;
         if (edge_detector.out){ //most significant bit of state_changer is 1 meaning ~2.68s has passed
           if (co == 0 && s == 0){ //correct outputs from adder circuit, move on to next input
           state.d = state.ONE;
@@ -41,6 +54,11 @@ module adder (
         a = 1; //set inputs to be 001
         b = 0;
         ci = 0;
+        a_out = 4h01;
+        b_out = 4h00;
+        c_out = 4h00;
+        d_out = 4h00;
+        testcase = 8b1;
         if (edge_detector.out){
           if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
           state.d = state.TWO;
@@ -55,6 +73,11 @@ module adder (
         a = 0; //set inputs to be 010
         b = 1;
         ci = 0;
+        a_out = 4h00;
+        b_out = 4h01;
+        c_out = 4h00;
+        d_out = 4h00;
+        testcase = 8b10;
         if (edge_detector.out){
           if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
           state.d = state.THREE;
@@ -68,6 +91,11 @@ module adder (
         a = 1; //set inputs to be 011
         b = 1;
         ci = 0;
+        a_out = 4h01;
+        b_out = 4h01;
+        c_out = 4h00;
+        d_out = 4h00;
+        testcase = 8b11;
         if (edge_detector.out){
           if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
           state.d = state.FOUR;
@@ -81,7 +109,11 @@ module adder (
         a = 0; //set inputs to be 100
         b = 0;
         ci = 1;
-        
+        a_out = 4h00;
+        b_out = 4h00;
+        c_out = 4h01;
+        d_out = 4h00;
+        testcase = 8b100;
         if (edge_detector.out){
           if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
           state.d = state.FIVE;
@@ -95,6 +127,11 @@ module adder (
         a = 1; //set inputs to be 101
         b = 0;
         ci = 1;
+        a_out = 4h01;
+        b_out = 4h00;
+        c_out = 4h01;
+        d_out = 4h00;
+        testcase = 8b101;
         if (edge_detector.out){
           if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
           state.d = state.SIX;
@@ -108,6 +145,11 @@ module adder (
         a = 0; //set inputs to be 110
         b = 1;
         ci = 1;
+        a_out = 4h00;
+        b_out = 4h01;
+        c_out = 4h01;
+        d_out = 4h00;
+        testcase = 8b110;
         if (edge_detector.out){
           if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
           state.d = state.SEVEN;
@@ -121,9 +163,14 @@ module adder (
         a = 1; //set inputs to be 111
         b = 1;
         ci = 1;
+        a_out = 4h01;
+        b_out = 4h01;
+        c_out = 4h01;
+        d_out = 4h00;
+        testcase = 8b111;
         if (edge_detector.out){
           if (co == 1 && s == 1){ //correct outputs from adder circuit, move on to next input
-          state.d = state.ZERO; //go back to first input, 000
+          state.d = state.GOOD; //go back to first input, 000
           }
           else {
           state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
@@ -131,10 +178,20 @@ module adder (
         }
       
       state.ERROR:
-        error = 1;
-        a = state_changer.q[26]; //causes a, b and ci to alternate between 0 and 1 every 2.68 seconds
-        b = state_changer.q[26]; //Since the signals a, b and ci are directly linked to the LEDs on the IO shield,
-        ci = state_changer.q[26];// this causes all three to blink, which is a unique signal to show that there is an error.
+        a_out = 4h0d;
+        b_out = 4h0d;
+        c_out = 4h0e;
+        d_out = 4h00;
+        
+      state.GOOD:
+        a_out = 4h0a;
+        b_out = 4h0b;
+        c_out = 4h0b;
+        d_out = 4h0c;
+        if (edge_detector.out){
+          state.d = state.ZERO; //go back to first input, 000
+           
+        }
         
           
   
