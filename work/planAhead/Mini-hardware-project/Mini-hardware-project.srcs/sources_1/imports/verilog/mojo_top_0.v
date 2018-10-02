@@ -17,6 +17,7 @@ module mojo_top_0 (
     input avr_tx,
     output reg avr_rx,
     input avr_rx_busy,
+    output reg [23:0] io_led,
     output reg [7:0] io_seg,
     output reg [3:0] io_sel,
     input [4:0] io_button,
@@ -80,17 +81,17 @@ module mojo_top_0 (
     spi_miso = 1'bz;
     spi_channel = 4'bzzzz;
     avr_rx = 1'bz;
+    io_led = 24'h000000;
     M_seg_values = 16'h0000;
+    M_seg_values = {M_adderInput_a_out, M_adderInput_b_out, M_adderInput_c_out, M_adderInput_d_out};
     io_seg = ~M_seg_seg;
     io_sel = ~M_seg_sel;
     a = 1'h0;
     b = 1'h0;
     ci = 1'h0;
-    if (io_button[1+0-:1]) begin
-      a = M_adderInput_a;
-      b = M_adderInput_b;
-      ci = M_adderInput_ci;
-    end
+    a = M_adderInput_a;
+    b = M_adderInput_b;
+    ci = M_adderInput_ci;
     M_adderInput_s = s;
     M_adderInput_co = co;
   end

@@ -12,7 +12,7 @@ module mojo_top (
     output avr_rx,          // AVR RX (FPGA TX)
     input avr_rx_busy,      // AVR RX buffer full
     
-    //output io_led [3][8],   // LEDs on IO Shield
+    output io_led [3][8],   // LEDs on IO Shield
     output io_seg [8],      // 7-segment LEDs on IO Shield
     output io_sel [4],      // Digit select on IO Shield
     input io_button [5], // when to star
@@ -46,27 +46,27 @@ module mojo_top (
     spi_miso = bz;            // not using SPI
     spi_channel = bzzzz;      // not using flags
     avr_rx = bz;              // not using serial port
-    
+    io_led = 3x{{8h00}};    // turn LEDs as test cases
     // the segments will display "0000" by default
     seg.values = {4h0, 4h0, 4h0, 4h0};
-    
+    seg.values = {adderInput.a_out, adderInput.b_out, adderInput.c_out, adderInput.d_out};
     io_seg = ~seg.seg; // connect segments to the driver
     io_sel = ~seg.sel; // connect digit select to the driver
     
     
     
-    // seg.values = {adderInput.a_out, adderInput.b_out, adderInput.c_out, adderInput.d_out};
-    // io_led = adderInput.testcase;    // turn LEDs as test cases
+    
+    
     
     
     a = 0;
     b = 0;
     ci = 0;
-    if (io_button[1]){
-      a = adderInput.a;
-      b = adderInput.b;
-      ci = adderInput.ci;
-    }
+    
+    a = adderInput.a;
+    b = adderInput.b;
+    ci = adderInput.ci;
+    
     adderInput.s = s;
     adderInput.co = co;
     

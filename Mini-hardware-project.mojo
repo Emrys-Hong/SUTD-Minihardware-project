@@ -8,7 +8,6 @@
     <src>seven_seg.luc</src>
     <src>number.luc</src>
     <ucf>custom.ucf</ucf>
-    <ucf lib="true">mojo.ucf</ucf>
     <component>counter.luc</component>
     <component>decoder.luc</component>
     <component>reset_conditioner.luc</component>

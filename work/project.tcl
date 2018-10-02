@@ -7,7 +7,7 @@ create_project $projName "$projDir/$projName" -part $device
 set_property design_mode RTL [get_filesets sources_1]
 set verilogSources [list "/home/emrys/mojo/Mini-hardware-project/work/verilog/mojo_top_0.v" "/home/emrys/mojo/Mini-hardware-project/work/verilog/reset_conditioner_1.v" "/home/emrys/mojo/Mini-hardware-project/work/verilog/adder_2.v" "/home/emrys/mojo/Mini-hardware-project/work/verilog/multi_seven_seg_3.v" "/home/emrys/mojo/Mini-hardware-project/work/verilog/edge_detector_4.v" "/home/emrys/mojo/Mini-hardware-project/work/verilog/counter_5.v" "/home/emrys/mojo/Mini-hardware-project/work/verilog/seven_seg_6.v" "/home/emrys/mojo/Mini-hardware-project/work/verilog/decoder_7.v"]
 import_files -fileset [get_filesets sources_1] -force -norecurse $verilogSources
-set ucfSources [list "/home/emrys/mojo/Mini-hardware-project/constraint/custom.ucf" "/home/emrys/Desktop/mojo-ide-B1.3.6/library/components/mojo.ucf"]
+set ucfSources [list "/home/emrys/mojo/Mini-hardware-project/constraint/custom.ucf"]
 import_files -fileset [get_filesets constrs_1] -force -norecurse $ucfSources
 set_property -name {steps.bitgen.args.More Options} -value {-g Binary:Yes -g Compress} -objects [get_runs impl_1]
 set_property steps.map.args.mt on [get_runs impl_1]
