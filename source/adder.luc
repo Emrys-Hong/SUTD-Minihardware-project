@@ -6,28 +6,30 @@ module adder (
     output ci, //last input to full adder
     input s, //sum and carry-out output from full adder, to test if output is correct
     input co,
-    output a_out[4],
-    output b_out[4],
-    output c_out[4],
-    output d_out[4],
-    output testcase[8]
+    output testcase[8],
+    
+    output out_seg,
+    output out_sel,
+    
+    output error
   ) {
   .clk(clk){
   edge_detector edge_detector(#RISE(1), #FALL(0)); //edge_detector to detect rising edge of state_changer
   .rst(rst){
-  dff state_changer[27]; //27 bit number, used as a timer. Change state when most significant bit is 1
-  fsm state = {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, ERROR, GOOD}; //all possible combinations of inputs to adder, plus one error state
+    dff state_changer[27]; //27 bit number, used as a timer. Change state when most significant bit is 1
+    fsm state = {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, ERROR, GOOD}; //all possible combinations of inputs to adder, plus one error state
+    multi_seven_seg seg;
     }
   
   }
   always {
+    seg.values = {4h0, 4h0, 4h0, 4h0};
+    out_seg = ~seg.seg;
+    out_sel = ~seg.sel;
     a=0;
     b=0;
     ci=0;
-    a_out = 4h00;
-    b_out = 4h00;
-    c_out = 4h00;
-    d_out = 4h00;
+    error = 0;
     testcase = 8b0;
     edge_detector.in = state_changer.q[26]; //most significant bit of 27 bit number
     state_changer.d = state_changer.q + 1; //increase value of state_changer for every clock cycle
@@ -36,10 +38,7 @@ module adder (
         a = 0; //set inputs to be 000
         b = 0;
         ci = 0;
-        a_out = 4h00;
-        b_out = 4h00;
-        c_out = 4h00;
-        d_out = 4h00;
+        seg.values = {4h00, 4h00, 4h00, 4h00};
         testcase = 8b0;
         if (edge_detector.out){ //most significant bit of state_changer is 1 meaning ~2.68s has passed
           if (co == 0 && s == 0){ //correct outputs from adder circuit, move on to next input
@@ -54,10 +53,7 @@ module adder (
         a = 1; //set inputs to be 001
         b = 0;
         ci = 0;
-        a_out = 4h01;
-        b_out = 4h00;
-        c_out = 4h00;
-        d_out = 4h00;
+        seg.values = {4h01, 4h00, 4h00, 4h00};
         testcase = 8b1;
         if (edge_detector.out){
           if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
@@ -73,10 +69,8 @@ module adder (
         a = 0; //set inputs to be 010
         b = 1;
         ci = 0;
-        a_out = 4h00;
-        b_out = 4h01;
-        c_out = 4h00;
-        d_out = 4h00;
+        
+        seg.values = {4h00, 4h01, 4h00, 4h00};
         testcase = 8b10;
         if (edge_detector.out){
           if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
@@ -91,10 +85,7 @@ module adder (
         a = 1; //set inputs to be 011
         b = 1;
         ci = 0;
-        a_out = 4h01;
-        b_out = 4h01;
-        c_out = 4h00;
-        d_out = 4h00;
+        seg.values = {4h01, 4h01, 4h00, 4h00};
         testcase = 8b11;
         if (edge_detector.out){
           if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
@@ -109,10 +100,7 @@ module adder (
         a = 0; //set inputs to be 100
         b = 0;
         ci = 1;
-        a_out = 4h00;
-        b_out = 4h00;
-        c_out = 4h01;
-        d_out = 4h00;
+        seg.values = {4h00, 4h00, 4h01, 4h00};
         testcase = 8b100;
         if (edge_detector.out){
           if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
@@ -127,10 +115,7 @@ module adder (
         a = 1; //set inputs to be 101
         b = 0;
         ci = 1;
-        a_out = 4h01;
-        b_out = 4h00;
-        c_out = 4h01;
-        d_out = 4h00;
+        seg.values = {4h01, 4h00, 4h01, 4h00};
         testcase = 8b101;
         if (edge_detector.out){
           if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
@@ -145,10 +130,7 @@ module adder (
         a = 0; //set inputs to be 110
         b = 1;
         ci = 1;
-        a_out = 4h00;
-        b_out = 4h01;
-        c_out = 4h01;
-        d_out = 4h00;
+        seg.values = {4h00, 4h01, 4h01, 4h00};
         testcase = 8b110;
         if (edge_detector.out){
           if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
@@ -163,10 +145,7 @@ module adder (
         a = 1; //set inputs to be 111
         b = 1;
         ci = 1;
-        a_out = 4h01;
-        b_out = 4h01;
-        c_out = 4h01;
-        d_out = 4h00;
+        seg.values = {4h01, 4h01, 4h01, 4h00};
         testcase = 8b111;
         if (edge_detector.out){
           if (co == 1 && s == 1){ //correct outputs from adder circuit, move on to next input
@@ -178,16 +157,11 @@ module adder (
         }
       
       state.ERROR:
-        a_out = 4h0d;
-        b_out = 4h0d;
-        c_out = 4h0e;
-        d_out = 4h00;
+        seg.values = {4h0d, 4h0d, 4h0e, 4h00};
+        error = 1;
         
       state.GOOD:
-        a_out = 4h0a;
-        b_out = 4h0b;
-        c_out = 4h0b;
-        d_out = 4h0c;
+        seg.values = {4h0a, 4h0b, 4h0b, 4h0c};
         if (edge_detector.out){
           state.d = state.ZERO; //go back to first input, 000
            

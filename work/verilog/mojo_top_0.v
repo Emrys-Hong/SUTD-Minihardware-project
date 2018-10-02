@@ -17,7 +17,6 @@ module mojo_top_0 (
     input avr_tx,
     output reg avr_rx,
     input avr_rx_busy,
-    output reg [23:0] io_led,
     output reg [7:0] io_seg,
     output reg [3:0] io_sel,
     input [4:0] io_button,
@@ -42,11 +41,10 @@ module mojo_top_0 (
   wire [1-1:0] M_adderInput_a;
   wire [1-1:0] M_adderInput_b;
   wire [1-1:0] M_adderInput_ci;
-  wire [4-1:0] M_adderInput_a_out;
-  wire [4-1:0] M_adderInput_b_out;
-  wire [4-1:0] M_adderInput_c_out;
-  wire [4-1:0] M_adderInput_d_out;
   wire [8-1:0] M_adderInput_testcase;
+  wire [1-1:0] M_adderInput_out_seg;
+  wire [1-1:0] M_adderInput_out_sel;
+  wire [1-1:0] M_adderInput_error;
   reg [1-1:0] M_adderInput_s;
   reg [1-1:0] M_adderInput_co;
   adder_2 adderInput (
@@ -57,21 +55,10 @@ module mojo_top_0 (
     .a(M_adderInput_a),
     .b(M_adderInput_b),
     .ci(M_adderInput_ci),
-    .a_out(M_adderInput_a_out),
-    .b_out(M_adderInput_b_out),
-    .c_out(M_adderInput_c_out),
-    .d_out(M_adderInput_d_out),
-    .testcase(M_adderInput_testcase)
-  );
-  wire [7-1:0] M_seg_seg;
-  wire [4-1:0] M_seg_sel;
-  reg [16-1:0] M_seg_values;
-  multi_seven_seg_3 seg (
-    .clk(clk),
-    .rst(rst),
-    .values(M_seg_values),
-    .seg(M_seg_seg),
-    .sel(M_seg_sel)
+    .testcase(M_adderInput_testcase),
+    .out_seg(M_adderInput_out_seg),
+    .out_sel(M_adderInput_out_sel),
+    .error(M_adderInput_error)
   );
   
   always @* begin
@@ -81,17 +68,16 @@ module mojo_top_0 (
     spi_miso = 1'bz;
     spi_channel = 4'bzzzz;
     avr_rx = 1'bz;
-    io_led = 24'h000000;
-    M_seg_values = 16'h0000;
-    M_seg_values = {M_adderInput_a_out, M_adderInput_b_out, M_adderInput_c_out, M_adderInput_d_out};
-    io_seg = ~M_seg_seg;
-    io_sel = ~M_seg_sel;
+    io_seg = M_adderInput_out_seg;
+    io_sel = M_adderInput_out_sel;
     a = 1'h0;
     b = 1'h0;
     ci = 1'h0;
-    a = M_adderInput_a;
-    b = M_adderInput_b;
-    ci = M_adderInput_ci;
+    if (!M_adderInput_error) begin
+      a = M_adderInput_a;
+      b = M_adderInput_b;
+      ci = M_adderInput_ci;
+    end
     M_adderInput_s = s;
     M_adderInput_co = co;
   end

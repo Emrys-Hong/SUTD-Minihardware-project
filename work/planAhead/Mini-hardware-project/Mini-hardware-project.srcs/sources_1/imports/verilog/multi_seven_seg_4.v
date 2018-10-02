@@ -9,7 +9,7 @@
      DIGITS = 4
      DIV = 16
 */
-module multi_seven_seg_3 (
+module multi_seven_seg_4 (
     input clk,
     input rst,
     input [15:0] values,

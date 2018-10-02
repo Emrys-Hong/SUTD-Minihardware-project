@@ -12,18 +12,17 @@ module adder_2 (
     output reg ci,
     input s,
     input co,
-    output reg [3:0] a_out,
-    output reg [3:0] b_out,
-    output reg [3:0] c_out,
-    output reg [3:0] d_out,
-    output reg [7:0] testcase
+    output reg [7:0] testcase,
+    output reg out_seg,
+    output reg out_sel,
+    output reg error
   );
   
   
   
   wire [1-1:0] M_edge_detector_out;
   reg [1-1:0] M_edge_detector_in;
-  edge_detector_4 edge_detector (
+  edge_detector_3 edge_detector (
     .clk(clk),
     .in(M_edge_detector_in),
     .out(M_edge_detector_out)
@@ -41,18 +40,28 @@ module adder_2 (
   localparam GOOD_state = 4'd9;
   
   reg [3:0] M_state_d, M_state_q = ZERO_state;
+  wire [7-1:0] M_seg_seg;
+  wire [4-1:0] M_seg_sel;
+  reg [16-1:0] M_seg_values;
+  multi_seven_seg_4 seg (
+    .clk(clk),
+    .rst(rst),
+    .values(M_seg_values),
+    .seg(M_seg_seg),
+    .sel(M_seg_sel)
+  );
   
   always @* begin
     M_state_d = M_state_q;
     M_state_changer_d = M_state_changer_q;
     
+    M_seg_values = 16'h0000;
+    out_seg = ~M_seg_seg;
+    out_sel = ~M_seg_sel;
     a = 1'h0;
     b = 1'h0;
     ci = 1'h0;
-    a_out = 4'h0;
-    b_out = 4'h0;
-    c_out = 4'h0;
-    d_out = 4'h0;
+    error = 1'h0;
     testcase = 8'h00;
     M_edge_detector_in = M_state_changer_q[26+0-:1];
     M_state_changer_d = M_state_changer_q + 1'h1;
@@ -62,10 +71,7 @@ module adder_2 (
         a = 1'h0;
         b = 1'h0;
         ci = 1'h0;
-        a_out = 4'h0;
-        b_out = 4'h0;
-        c_out = 4'h0;
-        d_out = 4'h0;
+        M_seg_values = 16'h0000;
         testcase = 8'h00;
         if (M_edge_detector_out) begin
           if (co == 1'h0 && s == 1'h0) begin
@@ -79,10 +85,7 @@ module adder_2 (
         a = 1'h1;
         b = 1'h0;
         ci = 1'h0;
-        a_out = 4'h1;
-        b_out = 4'h0;
-        c_out = 4'h0;
-        d_out = 4'h0;
+        M_seg_values = 16'h1000;
         testcase = 8'h01;
         if (M_edge_detector_out) begin
           if (co == 1'h0 && s == 1'h1) begin
@@ -96,10 +99,7 @@ module adder_2 (
         a = 1'h0;
         b = 1'h1;
         ci = 1'h0;
-        a_out = 4'h0;
-        b_out = 4'h1;
-        c_out = 4'h0;
-        d_out = 4'h0;
+        M_seg_values = 16'h0100;
         testcase = 8'h02;
         if (M_edge_detector_out) begin
           if (co == 1'h0 && s == 1'h1) begin
@@ -113,10 +113,7 @@ module adder_2 (
         a = 1'h1;
         b = 1'h1;
         ci = 1'h0;
-        a_out = 4'h1;
-        b_out = 4'h1;
-        c_out = 4'h0;
-        d_out = 4'h0;
+        M_seg_values = 16'h1100;
         testcase = 8'h03;
         if (M_edge_detector_out) begin
           if (co == 1'h1 && s == 1'h0) begin
@@ -130,10 +127,7 @@ module adder_2 (
         a = 1'h0;
         b = 1'h0;
         ci = 1'h1;
-        a_out = 4'h0;
-        b_out = 4'h0;
-        c_out = 4'h1;
-        d_out = 4'h0;
+        M_seg_values = 16'h0010;
         testcase = 8'h04;
         if (M_edge_detector_out) begin
           if (co == 1'h0 && s == 1'h1) begin
@@ -147,10 +141,7 @@ module adder_2 (
         a = 1'h1;
         b = 1'h0;
         ci = 1'h1;
-        a_out = 4'h1;
-        b_out = 4'h0;
-        c_out = 4'h1;
-        d_out = 4'h0;
+        M_seg_values = 16'h1010;
         testcase = 8'h05;
         if (M_edge_detector_out) begin
           if (co == 1'h1 && s == 1'h0) begin
@@ -164,10 +155,7 @@ module adder_2 (
         a = 1'h0;
         b = 1'h1;
         ci = 1'h1;
-        a_out = 4'h0;
-        b_out = 4'h1;
-        c_out = 4'h1;
-        d_out = 4'h0;
+        M_seg_values = 16'h0110;
         testcase = 8'h06;
         if (M_edge_detector_out) begin
           if (co == 1'h1 && s == 1'h0) begin
@@ -181,10 +169,7 @@ module adder_2 (
         a = 1'h1;
         b = 1'h1;
         ci = 1'h1;
-        a_out = 4'h1;
-        b_out = 4'h1;
-        c_out = 4'h1;
-        d_out = 4'h0;
+        M_seg_values = 16'h1110;
         testcase = 8'h07;
         if (M_edge_detector_out) begin
           if (co == 1'h1 && s == 1'h1) begin
@@ -195,16 +180,11 @@ module adder_2 (
         end
       end
       ERROR_state: begin
-        a_out = 4'hd;
-        b_out = 4'hd;
-        c_out = 4'he;
-        d_out = 4'h0;
+        M_seg_values = 16'hdde0;
+        error = 1'h1;
       end
       GOOD_state: begin
-        a_out = 4'ha;
-        b_out = 4'hb;
-        c_out = 4'hb;
-        d_out = 4'hc;
+        M_seg_values = 16'habbc;
         if (M_edge_detector_out) begin
           M_state_d = ZERO_state;
         end
