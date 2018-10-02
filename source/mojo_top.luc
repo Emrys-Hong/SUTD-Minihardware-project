@@ -32,7 +32,7 @@ module mojo_top (
     reset_conditioner reset_cond;
     .rst(rst){
     adder adderInput;
-    numbers seg;
+    multi_seven_seg seg;
  
   }
   }
@@ -47,13 +47,13 @@ module mojo_top (
     spi_channel = bzzzz;      // not using flags
     avr_rx = bz;              // not using serial port
     
-    
+    // the segments will display "0000" by default
+    seg.values = {4h0, 4h0, 4h0, 4h0};
     
     io_seg = ~seg.seg; // connect segments to the driver
     io_sel = ~seg.sel; // connect digit select to the driver
     
-    // the segments will display "0000" by default
-    seg.values = {4h0, 4h0, 4h0, 4h0};
+    
     
     // seg.values = {adderInput.a_out, adderInput.b_out, adderInput.c_out, adderInput.d_out};
     // io_led = adderInput.testcase;    // turn LEDs as test cases
@@ -71,13 +71,6 @@ module mojo_top (
     adderInput.co = co;
     
 
-
-    
-
-    
-
-    
-    
 
   }
 }

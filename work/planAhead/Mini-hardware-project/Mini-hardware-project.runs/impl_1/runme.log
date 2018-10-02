@@ -388,7 +388,7 @@ Loading device for application Rf_Device from file '6slx9.nph' in environment
 /opt/Xilinx/14.7/ISE_DS/ISE/.
    "mojo_top_0" is an NCD, version 3.2, device xc6slx9, package tqg144, speed -2
 
-Analysis completed Tue Oct  2 21:39:01 2018
+Analysis completed Tue Oct  2 21:53:17 2018
 --------------------------------------------------------------------------------
 
 Generating Report ...

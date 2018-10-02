@@ -7,8 +7,8 @@ Reading design: mojo_top_0.prj
 =========================================================================
 *                          HDL Parsing                                  *
 =========================================================================
-Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/number_6.v" into library work
-Parsing module <number_6>.
+Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/seven_seg_6.v" into library work
+Parsing module <seven_seg_6>.
 Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/edge_detector_4.v" into library work
 Parsing module <edge_detector_4>.
 Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/decoder_7.v" into library work
@@ -17,8 +17,8 @@ Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mi
 Parsing module <counter_5>.
 Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/reset_conditioner_1.v" into library work
 Parsing module <reset_conditioner_1>.
-Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/numbers_3.v" into library work
-Parsing module <numbers_3>.
+Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/multi_seven_seg_3.v" into library work
+Parsing module <multi_seven_seg_3>.
 Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/adder_2.v" into library work
 Parsing module <adder_2>.
 Analyzing Verilog file "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/mojo_top_0.v" into library work
@@ -41,11 +41,11 @@ WARNING:HDLCompiler:1127 - "/home/emrys/mojo/Mini-hardware-project/work/planAhea
 WARNING:HDLCompiler:1127 - "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/mojo_top_0.v" Line 62: Assignment to M_adderInput_d_out ignored, since the identifier is never used
 WARNING:HDLCompiler:1127 - "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/mojo_top_0.v" Line 63: Assignment to M_adderInput_testcase ignored, since the identifier is never used
 
-Elaborating module <numbers_3>.
+Elaborating module <multi_seven_seg_3>.
 
 Elaborating module <counter_5>.
 
-Elaborating module <number_6>.
+Elaborating module <seven_seg_6>.
 
 Elaborating module <decoder_7>.
 
@@ -116,14 +116,14 @@ Synthesizing Unit <edge_detector_4>.
 	inferred   1 D-type flip-flop(s).
 Unit <edge_detector_4> synthesized.
 
-Synthesizing Unit <numbers_3>.
-    Related source file is "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/numbers_3.v".
+Synthesizing Unit <multi_seven_seg_3>.
+    Related source file is "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/multi_seven_seg_3.v".
     Found 4-bit adder for signal <M_ctr_value[1]_GND_5_o_add_0_OUT> created at line 48.
     Found 31-bit shifter logical right for signal <n0010> created at line 48
     Summary:
 	inferred   1 Adder/Subtractor(s).
 	inferred   1 Combinational logic shifter(s).
-Unit <numbers_3> synthesized.
+Unit <multi_seven_seg_3> synthesized.
 
 Synthesizing Unit <counter_5>.
     Related source file is "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/counter_5.v".
@@ -135,12 +135,12 @@ Synthesizing Unit <counter_5>.
 	inferred   1 Multiplexer(s).
 Unit <counter_5> synthesized.
 
-Synthesizing Unit <number_6>.
-    Related source file is "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/number_6.v".
+Synthesizing Unit <seven_seg_6>.
+    Related source file is "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/seven_seg_6.v".
     Found 16x7-bit Read Only RAM for signal <segs>
     Summary:
 	inferred   1 RAM(s).
-Unit <number_6> synthesized.
+Unit <seven_seg_6> synthesized.
 
 Synthesizing Unit <decoder_7>.
     Related source file is "/home/emrys/mojo/Mini-hardware-project/work/planAhead/Mini-hardware-project/Mini-hardware-project.srcs/sources_1/imports/verilog/decoder_7.v".
@@ -187,7 +187,7 @@ Synthesizing (advanced) Unit <counter_5>.
 The following registers are absorbed into counter <M_ctr_q>: 1 register on signal <M_ctr_q>.
 Unit <counter_5> synthesized (advanced).
 
-Synthesizing (advanced) Unit <number_6>.
+Synthesizing (advanced) Unit <seven_seg_6>.
 INFO:Xst:3218 - HDL ADVISOR - The RAM <Mram_segs> will be implemented on LUTs either because you have described an asynchronous read or because of currently unsupported block RAM features. If you have described an asynchronous read, making it synchronous would allow you to take advantage of available block RAM resources, for optimized device usage and improved timings. Please refer to your documentation for coding guidelines.
     -----------------------------------------------------------------------
     | ram_type           | Distributed                         |          |
@@ -199,7 +199,7 @@ INFO:Xst:3218 - HDL ADVISOR - The RAM <Mram_segs> will be implemented on LUTs ei
     |     diA            | connected to signal <GND>           |          |
     |     doA            | connected to signal <segs>          |          |
     -----------------------------------------------------------------------
-Unit <number_6> synthesized (advanced).
+Unit <seven_seg_6> synthesized (advanced).
 
 =========================================================================
 Advanced HDL Synthesis Report

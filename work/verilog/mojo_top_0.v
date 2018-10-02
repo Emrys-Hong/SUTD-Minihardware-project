@@ -62,10 +62,10 @@ module mojo_top_0 (
     .d_out(M_adderInput_d_out),
     .testcase(M_adderInput_testcase)
   );
-  wire [8-1:0] M_seg_seg;
+  wire [7-1:0] M_seg_seg;
   wire [4-1:0] M_seg_sel;
   reg [16-1:0] M_seg_values;
-  numbers_3 seg (
+  multi_seven_seg_3 seg (
     .clk(clk),
     .rst(rst),
     .values(M_seg_values),
@@ -80,9 +80,9 @@ module mojo_top_0 (
     spi_miso = 1'bz;
     spi_channel = 4'bzzzz;
     avr_rx = 1'bz;
+    M_seg_values = 16'h0000;
     io_seg = ~M_seg_seg;
     io_sel = ~M_seg_sel;
-    M_seg_values = 16'h0000;
     a = 1'h0;
     b = 1'h0;
     ci = 1'h0;
