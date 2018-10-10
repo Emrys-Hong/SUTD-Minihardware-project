@@ -6,19 +6,19 @@ module adder (
     output ci, //last input to full adder
     input s, //sum and carry-out output from full adder, to test if output is correct
     input co,
-    output testcase[8],
+    output testcase[8], // which test case it is, it is showed on the io_LED
     
-    output error,
-    output first[4],
-    output second[4],
-    output third[4],
-    output fourth[4]
+    output error, // error case or not, if it is error case, the FPGA will not proceed.
+    output first[4], // first digit to be showed on the io_seg, it is coresponding to A
+    output second[4], // second digit to be showed on the io_seg, it is coresponding to B
+    output third[4], // third digit to be showed on the io_seg, it is corespoinding to C
+    output fourth[4] // fourth digigt to be showed on the io_seg, it is used when ERR or good.
   ) {
   .clk(clk){
   edge_detector edge_detector(#RISE(1), #FALL(0)); //edge_detector to detect rising edge of state_changer
   .rst(rst){
     dff state_changer[27]; //27 bit number, used as a timer. Change state when most significant bit is 1
-    fsm state = {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, ERROR, GOOD}; //all possible combinations of inputs to adder, plus one error state
+    fsm state = {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, ERROR, GOOD}; // 8 possible test cases, including the error state, and good state(when all the test case succeed)
     
     }
   
@@ -26,15 +26,15 @@ module adder (
   always {
     
     
-    first = 4h0;
-    second = 4h0;
-    third = 4h0;
-    fourth = 4h0;
-    a=0;
-    b=0;
-    ci=0;
-    error = 0;
-    testcase = 8b0;
+    first = 4h0; // first is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+    second = 4h0; // second is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+    third = 4h0; // third is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+    fourth = 4h0; // fourth is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+    a=0; // a is set to default value 0
+    b=0; // b is set to default value 0
+    ci=0; // Cin is set to default value 0
+    error = 0; // there is no errror first
+    testcase = 8b0; // test case start from 0b0
     edge_detector.in = state_changer.q[26]; //most significant bit of 27 bit number
     state_changer.d = state_changer.q + 1; //increase value of state_changer for every clock cycle
     case (state.q){
@@ -42,17 +42,17 @@ module adder (
         a = 0; //set inputs to be 000
         b = 0;
         ci = 0;
-        first = 4h0;
+        first = 4h0; 
         second = 4h0;
         third = 4h0;
         fourth = 4h0;
         testcase = 8b0;
-        if (edge_detector.out){ //most significant bit of state_changer is 1 meaning ~2.68s has passed
-          if (co == 0 && s == 0){ //correct outputs from adder circuit, move on to next input
+        if (edge_detector.out){ // edge detector will detect change of the most significant bit every 2.68s
+          if (co == 0 && s == 0){ // correct outputs from adder circuit, move on to next input
           state.d = state.ONE;
           }
           else {
-          state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
+          state.d = state.ERROR; // else the input is not correct, proceed to error state
           }
         }
       
@@ -60,42 +60,42 @@ module adder (
         a = 1; //set inputs to be 001
         b = 0;
         ci = 0;
-        first = 4h1;
-        second = 4h0;
-        third = 4h0;
-        fourth = 4h0;
-        testcase = 8b1;
+        first = 4h1; // first is output to the first digit on the io_seg, it is defined as 1 in the seven_seg.luc file
+        second = 4h0; // second is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+        third = 4h0; // third is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+        fourth = 4h0; // fourth is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file, and this is always defined as 0.
+        testcase = 8b1; 
         if (edge_detector.out){
-          if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
+          if (co == 0 && s == 1){ // the correct inputs to continue.
           state.d = state.TWO;
           }
           else {
-          state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
+          state.d = state.ERROR; // incorrect outputs go into error state
           }
         }
         
         
       state.TWO:
-        a = 0; //set inputs to be 010
+        a = 0; // set inputs to be 010
         b = 1;
         ci = 0;
         
-        first = 4h0;
-        second = 4h1;
-        third = 4h0;
-        fourth = 4h0;
-        testcase = 8b10;
+        first = 4h0; // first is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+        second = 4h1; // first is output to the second digit on the io_seg, it is defined as 1 in the seven_seg.luc file
+        third = 4h0; // third is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+        fourth = 4h0; // fourth is output to the first digit on the io_seg, it is defined as 0 in the seven_seg.luc file
+        testcase = 8b10; // testcase 2
         if (edge_detector.out){
-          if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
+          if (co == 0 && s == 1){ // correct outputs move on to next input.
           state.d = state.THREE;
           }
           else {
-          state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
+          state.d = state.ERROR; // incorrect outputs go into error state
           }
         }
 
       state.THREE:
-        a = 1; //set inputs to be 011
+        a = 1;
         b = 1;
         ci = 0;
         first = 4h1;
@@ -104,16 +104,16 @@ module adder (
         fourth = 4h0;
         testcase = 8b11;
         if (edge_detector.out){
-          if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
+          if (co == 1 && s == 0){ // correct outputs move on to next input
           state.d = state.FOUR;
           }
           else {
-          state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
+          state.d = state.ERROR; // incorrect outputs go into error state
           }      
         }
       
-      state.FOUR:
-        a = 0; //set inputs to be 100
+      state.FOUR: // output 001
+        a = 0; 
         b = 0;
         ci = 1;
         first = 4h0;
@@ -122,16 +122,16 @@ module adder (
         fourth = 4h0;
         testcase = 8b100;
         if (edge_detector.out){
-          if (co == 0 && s == 1){ //correct outputs from adder circuit, move on to next input
+          if (co == 0 && s == 1){ // correct outputs move on to next input
           state.d = state.FIVE;
           }
           else {
-          state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
+          state.d = state.ERROR; //incorrect outputs go into error state
           }
         }
         
-      state.FIVE:
-        a = 1; //set inputs to be 101
+      state.FIVE: // inputs 101
+        a = 1; 
         b = 0;
         ci = 1;
         first = 4h1;
@@ -140,16 +140,16 @@ module adder (
         fourth = 4h0;
         testcase = 8b101;
         if (edge_detector.out){
-          if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
+          if (co == 1 && s == 0){ // correct outputs move on to next input
           state.d = state.SIX;
           }
           else {
-          state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
+          state.d = state.ERROR; // incorrect outputs go into error state
           }
         }
         
       state.SIX:
-        a = 0; //set inputs to be 110
+        a = 0; // set inputs to be 110
         b = 1;
         ci = 1;
         first = 4h0;
@@ -158,16 +158,16 @@ module adder (
         fourth = 4h0;
         testcase = 8b110;
         if (edge_detector.out){
-          if (co == 1 && s == 0){ //correct outputs from adder circuit, move on to next input
+          if (co == 1 && s == 0){ // correct outputs move on to next input
           state.d = state.SEVEN;
           }
           else {
-          state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
+          state.d = state.ERROR; // incorrect outputs go into error state
           }
         }
     
       state.SEVEN:
-        a = 1; //set inputs to be 111
+        a = 1; // set inputs to be 111
         b = 1;
         ci = 1;
         first = 4h1;
@@ -176,35 +176,30 @@ module adder (
         fourth = 4h0;
         testcase = 8b111;
         if (edge_detector.out){
-          if (co == 1 && s == 1){ //correct outputs from adder circuit, move on to next input
-          state.d = state.GOOD; //go back to first input, 000
+          if (co == 1 && s == 1){ // correct outputs move on to next input
+          state.d = state.GOOD; // go to state GOOD, and will display good in the IO_sel board.
           }
           else {
-          state.d = state.ERROR; //incorrect outputs from adder circuit, go into error state
+          state.d = state.ERROR; // incorrect outputs go into error state
           }
         }
       
-      state.ERROR:
+      state.ERROR: // error state, once you go in it is not going to get out of its state unless reset
         
-        first = 4hd; // letter E
-        second = 4he; // letter R
-        third = 4he; // letter R
+        first = 4hd; // letter E, defined in the seven_seg.luc
+        second = 4he; // letter R, defined in the seven_seg.luc
+        third = 4he; // letter R, defined in the seven_seg.luc
         fourth = 4hf; // letter undefined, so it is letter default: "nothing"
         error = 1; // output error will be 1 and it will stop looping.
         
       state.GOOD:
-        first = 4ha; // letter g
-        second = 4hb; // letter o
-        third = 4hb; // letter o
-        fourth = 4hc; // letter d
+        first = 4ha; // letter g, defined in the seven_seg.luc
+        second = 4hb; // letter o, defined in the seven_seg.luc
+        third = 4hb; // letter o, defined in the seven_seg.luc
+        fourth = 4hc; // letter d, defined in the seven_seg.luc
         if (edge_detector.out){
           state.d = state.ZERO; //go back to first input, 000
-           
         }
-        
-          
-  
 }
 }
- 
 }
